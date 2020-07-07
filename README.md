@@ -1,5 +1,15 @@
 # oliverhickmanmusic
 
+If you'd like to (for some reason) run locally, follow the instructions below. The current build can been seen at [oliverhickmanmusic.com](https://oliverhickmanmusic.com)  
+### Features:
+- SPA built with Vue, Vuex, and Vue Router
+- Responsive on all screen sizes
+- Score previews with PDF.js
+- Music player built with Plyr
+- Assets delivered through DigitalOcean CDN
+- Deployed on Netlify
+    
+
 ## Project setup
 ```
 npm install
@@ -14,16 +24,3 @@ npm run serve
 ```
 npm run build
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
