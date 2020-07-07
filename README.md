@@ -4,8 +4,8 @@ If you'd like to (for some reason) run locally, follow the instructions below. T
 ### Features:
 - SPA built with Vue, Vuex, and Vue Router
 - Responsive on all screen sizes
-- Score previews with PDF.js
-- Music player built with Plyr
+- Score previews with [PDF.js](https://mozilla.github.io/pdf.js/)
+- Music player built with [Plyr](https://plyr.io/)
 - Assets delivered through DigitalOcean CDN
 - Deployed on Netlify
     
