@@ -1,54 +1,60 @@
 <template>
-<div class="playerMovementBoxWrapper" :class="$mq | mq({sm:'small', md:'small'})">
-  <div class="showMoreMvmts">
-
-    <popper trigger="click" :options="popperOpts" :visible-arrow="true">
-
-      <div class="moreMvmts popper" v-bind:style="menuCalc">
-        <div v-for="(mvmt, mvmtIndex) in mvmts" :key="mvmtIndex"
-          class="mvmt"
-          v-on:click="selectMvmt(mvmtIndex)"
-        >
-          <!-- Render HTML here to control breaking spaces -->
-          <span class="mvmtTitle" v-html="mvmt.title"> </span>
-          <font-awesome icon="play-circle" class="fa" v-bind:class="{ isPlaying: movementPlaying[mvmtIndex] }"/>
+  <div
+    class="playerMovementBoxWrapper"
+    :class="$mq | mq({ sm: 'small', md: 'small' })"
+  >
+    <div class="showMoreMvmts">
+      <popper trigger="click" :options="popperOpts" :visible-arrow="true">
+        <div class="moreMvmts popper" v-bind:style="menuCalc">
+          <div
+            v-for="(mvmt, mvmtIndex) in mvmts"
+            :key="mvmtIndex"
+            class="mvmt"
+            v-on:click="selectMvmt(mvmtIndex)"
+          >
+            <!-- Render HTML here to control breaking spaces -->
+            <span class="mvmtTitle" v-html="mvmt.title"> </span>
+            <font-awesome
+              icon="play-circle"
+              class="fa"
+              v-bind:class="{ isPlaying: movementPlaying[mvmtIndex] }"
+            />
+          </div>
         </div>
-      </div>
 
-      <!-- control the placement of the movement selector -->
-      <div slot="reference" class="movementButtonWrapper">
-        <mq-layout :mq="['sm','md']">
-          <font-awesome icon="bars" class="movementButtonFa small"/>
-        </mq-layout>
+        <!-- control the placement of the movement selector -->
+        <div slot="reference" class="movementButtonWrapper">
+          <mq-layout :mq="['sm', 'md']">
+            <font-awesome icon="bars" class="movementButtonFa small" />
+          </mq-layout>
 
-        <mq-layout :mq="['lg']">
-          <font-awesome icon="bars" class="movementButtonFa"/>
-          <p>MOVEMENTS</p>
-        </mq-layout>
-      </div>
-
-    </popper>
+          <mq-layout :mq="['lg']">
+            <font-awesome icon="bars" class="movementButtonFa" />
+            <p>MOVEMENTS</p>
+          </mq-layout>
+        </div>
+      </popper>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faBars, faPlayCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBars, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import Popper from "vue-popperjs";
+import "vue-popperjs/dist/vue-popper.css";
 
-import Popper from 'vue-popperjs';
-import 'vue-popperjs/dist/vue-popper.css';
+import "animate.css/animate.min.css";
 
-import 'animate.css/animate.min.css';
-import EventBus from '../eventBus.js';
-
+import EventBus from "../eventBus.js";
+``;
 library.add(faBars, faPlayCircle);
 
 export default {
   components: {
-    'font-awesome': FontAwesomeIcon,
+    "font-awesome": FontAwesomeIcon,
     popper: Popper,
   },
   data() {
@@ -58,7 +64,7 @@ export default {
       progressPercent: 0,
       popperOpts: {
         hover: false,
-        placement: '',
+        placement: "",
         modifiers: {
           preventOverflow: {
             enabled: false,
@@ -90,7 +96,10 @@ export default {
     determineWhatMvmtIsPlaying(percent) {
       const realPercent = percent / 100;
       const durationPercentLength = this.durationPercent.length;
-      const lastMvmtPlaying = realPercent.between(this.durationPercent[durationPercentLength - 1], 1);
+      const lastMvmtPlaying = realPercent.between(
+        this.durationPercent[durationPercentLength - 1],
+        1
+      );
       // if we're playing this piece
       if (this.$store.state.whatIsPlaying == this.slug) {
         // if the last movement is playing set it to true, otherwise loop through and set what is playing
@@ -99,7 +108,10 @@ export default {
         } else {
           this.durationPercent.forEach((mvmtPercent, index) => {
             // compare the percent with two movements to see if it's inbetween
-            const isMvmtPlaying = realPercent.between(mvmtPercent, this.durationPercent[index + 1]);
+            const isMvmtPlaying = realPercent.between(
+              mvmtPercent,
+              this.durationPercent[index + 1]
+            );
             this.movementPlaying[index] = isMvmtPlaying;
           });
         }
@@ -114,12 +126,12 @@ export default {
     },
   },
 
-  props: ['mvmts', 'slug'],
+  props: ["mvmts", "slug"],
 
   computed: {
     columnsCalc() {
       let columns;
-      if (this.$mq !== 'lg') {
+      if (this.$mq !== "lg") {
         columns = 1;
       } else {
         columns = this.mvmts.length;
@@ -128,7 +140,7 @@ export default {
     },
     menuCalc() {
       const { length } = this.mvmts;
-      if (this.$mq !== 'lg') {
+      if (this.$mq !== "lg") {
         return `gridTemplateRows: repeat(${length}, auto)`;
       }
       return `gridTemplateColumns: repeat(${length}, auto)`;
@@ -140,15 +152,15 @@ export default {
   },
 
   beforeMount() {
-    this.popperOpts.placement = (this.$mq !== 'lg') ? 'bottom-start' : 'bottom';
+    this.popperOpts.placement = this.$mq !== "lg" ? "bottom-start" : "bottom";
   },
 
   mounted() {
-    EventBus.$on('DURATIONS_REGISTERED', () => {
+    EventBus.$on("DURATIONS_REGISTERED", () => {
       this.calculateDurationPercent();
     });
 
-    EventBus.$on('NEW_PROGRESS_PERCENT', (percent) => {
+    EventBus.$on("NEW_PROGRESS_PERCENT", (percent) => {
       this.progressPercent = percent;
       this.determineWhatMvmtIsPlaying(percent);
     });
@@ -158,8 +170,8 @@ export default {
 // convert [M]M:SS to seconds. Ripped from https://stackoverflow.com/questions/9640266/convert-hhmmss-string-to-seconds-only-in-javascript
 String.prototype.toSeconds = function () {
   if (!this) return null;
-  const ms = this.split(':');
-  return (+ms[0]) * 60 + (+ms[1] || 0);
+  const ms = this.split(":");
+  return +ms[0] * 60 + (+ms[1] || 0);
 };
 // check between number. ripped from https://stackoverflow.com/questions/14718561/how-to-check-if-a-number-is-between-two-values
 Number.prototype.between = function (a, b) {
@@ -170,7 +182,6 @@ Number.prototype.between = function (a, b) {
 </script>
 
 <style>
-
 /* wraps the button and the grid */
 .playerMovementBoxWrapper {
   position: relative;
@@ -199,15 +210,14 @@ Number.prototype.between = function (a, b) {
   display: inline-block;
 }
 
-
-.movementButtonFa{
+.movementButtonFa {
   cursor: pointer;
 }
 .movementButtonFa:hover {
-  transform: scale(1.1,1.1);
+  transform: scale(1.1, 1.1);
 }
-.movementButtonWrapper:hover .movementButtonFa{
-  transform: scale(1.1,1.1);
+.movementButtonWrapper:hover .movementButtonFa {
+  transform: scale(1.1, 1.1);
 }
 .playerMovementBoxWrapper.small .movementButtonWrapper {
   margin-left: 0;
@@ -222,7 +232,7 @@ Number.prototype.between = function (a, b) {
 }
 
 .showMoreMvmts p {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   font-size: 14px;
   margin: 0px;
   padding-left: 5px;
@@ -242,7 +252,7 @@ Number.prototype.between = function (a, b) {
 /* the grid cells */
 .mvmt {
   font-size: 13px;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "Nunito Sans", sans-serif;
   grid-row: auto;
   padding: 0px 5px;
   border-radius: 2px;
